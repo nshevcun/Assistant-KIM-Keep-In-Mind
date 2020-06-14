@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>jQuery To-Do Application</title>
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href='https://fonts.googleapis.com/css?family=Parisienne' rel='stylesheet'>
+
+  <style>
+    article,aside,details,figcaption,figure,footer,header,hgroup,nav,section,summary{display:block;}audio,canvas,video{display:inline-block;}audio:not([controls]){display:none;height:0;}[hidden]{display:none;}html{font-family:sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;}a:focus{outline:thin dotted;}a:active,a:hover{outline:0;}h1{font-size:2em;}abbr[title]{border-bottom:1px dotted;}b,strong{font-weight:700;}dfn{font-style:italic;}mark{background:#ff0;color:#000;}code,kbd,pre,samp{font-family:monospace, serif;font-size:1em;}pre{white-space:pre-wrap;word-wrap:break-word;}q{quotes:\201C \201D \2018 \2019;}small{font-size:80%;}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline;}sup{top:-.5em;}sub{bottom:-.25em;}img{border:0;}svg:not(:root){overflow:hidden;}fieldset{border:1px solid silver;margin:0 2px;padding:.35em .625em .75em;}button,input,select,textarea{font-family:inherit;font-size:100%;margin:0;}button,input{line-height:normal;}button,html input[type=button],/* 1 */
+    input[type=reset],input[type=submit]{-webkit-appearance:button;cursor:pointer;}button[disabled],input[disabled]{cursor:default;}input[type=checkbox],input[type=radio]{box-sizing:border-box;padding:0;}input[type=search]{-webkit-appearance:textfield;-moz-box-sizing:content-box;-webkit-box-sizing:content-box;box-sizing:content-box;}input[type=search]::-webkit-search-cancel-button,input[type=search]::-webkit-search-decoration{-webkit-appearance:none;}textarea{overflow:auto;vertical-align:top;}table{border-collapse:collapse;border-spacing:0;}body,figure{margin:0;}legend,button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0;}
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    }
+
+    h1 {
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    button, input, select[multiple], textarea {
+      background-image: none;
+    }
+
+    input, button, select, textarea {
+      font-family: inherit;
+      font-size: inherit;
+      line-height: inherit;
+    }
+
+    button, input {
+      line-height: normal;
+    }
+
+    button, input, select, textarea {
+      margin: 0;
+      font-family: inherit;
+      font-size: 100%;
+    }
+
+    ul, ol {
+      font-family: 'Parisienne';
+      font-size: 30px;
+      color: purple;
+      margin-top: 0;
+      line-height: 2.1;
+      margin-bottom: 10px;
+      list-style: none; /* Natalie's note: Removing the bullets from the list*/
+    }
+
+    ul li {
+      cursor: move;
+    }
+
+    /* Natalie's note: Changing the "bullet" in the list to a "checkbox" */
+    .empty-box::before {
+      content: "\2B1C";
+      font-weight: bold;
+      display: inline-block;
+      width: 1.5em;
+      margin-left: -1em;
+    }
+    .filled-box::before {
+      content: "\2B1B";
+      font-weight: bold;
+      display: inline-block;
+      width: 1.5em;
+      margin-left: -1em;
+    }
+    /* End of Bullet Edit */
+
+    a {
+      color: #428bca;
+      text-decoration: none;
+    }
+
+    main {
+      padding: 30px;
+      margin-bottom: 10px;
+      font-size: 21px;
+      font-weight: 200;
+      line-height: 1.1;
+      color: inherit;
+      background-color: #eee;
+    }
+
+    main h1 {
+      font-size: 63px;
+      line-height: 1;
+      color: inherit;
+    }
+
+    .container {
+      max-width: 750px;
+      padding: 0 15px;
+      margin: auto;
+    }
+
+    .page-header {
+      padding-bottom: 10px;
+      margin: 40px 0 20px;
+      border-bottom: 1px solid #eee;
+    }
+
+    input {
+      height: 45px;
+      padding: 10px 16px;
+      font-size: 18px;
+      line-height: 1.3;
+      border-radius: 6px;
+    }
+
+    .form-control {
+      display: block;
+      width: 100%;
+      height: 35px;
+      padding: 6px 12px;
+      font-size: 14px;
+      line-height: 1.4;
+      color: #555;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+      transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    }
+
+    .alert {
+      color: #b94a48;
+      background-color: #f2dede;
+      border: 1px solid #eed3d7;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+    }
+
+    .text-muted {
+      color: #999;
+      text-decoration: line-through; /* Natalie's note: decided to add a strike-through as well */
+    }
+
+    /* Two extra classes to help me reveal error message */
+    .uh-oh {
+      font-size: 20px;
+    }
+
+    .hidden {
+      visibility: hidden;
+    }
+
+  </style>
+</head>
+<body>
+
+<main>
+  <div class="container">
+    
+    <div class="page-header"> 
+      <h1>jQuery To-Do Application</h1>
+      <h5>Click on a list item to mark it as "done". Press Shift when clicking to delete it from list.</h5>
+    </div>
+
+    <form>
+      <input class="form-control" type="text" placeholder="Add an item...">
+    </form>
+    <p class="uh-oh hidden"><b>Please let me know which task you'd like me to remember.</b></p>
+
+    <ul class="need-to-do">
+      <!-- To do items get added dynamically here -->
+    </ul>
+    <ul class="all-done">
+
+    </ul>
+  </div>
+</main>
+
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<script>
+
+// INSERT CODE HERE
+
+// Natalie's note to Leo: I also edited some of the CSS styles to get the effects that I wanted. :)
+
+// This function gets the cursor into the input window on page load.
+$("input:text").focus();
+
+// Function that will turn an item that's passed to it into an HTML list item.
+const listAppend = (item) => {
+  return `<li class="empty-box">${item}</li>`; // Empty-box class helps replace the list bullet with a "checkbox"
+}
+
+// Fetching the user input and turning it into a list item
+$(document).ready(function(){
+  $("input.form-control").keypress(function(event) {
+    if (event.keyCode == 13){  // <-- This tells the function to listen specifically for when the "Enter" key is pressed.
+      if ($(".form-control").val() == '') { // If input is empty when "Enter" is hit, the alert message is revealed
+        $(".container").addClass("alert");
+        $(".uh-oh").removeClass("hidden");
+        return false;
+      }
+      if ($(".container").hasClass("alert")) { // Removes alert message after a proper input has been entered
+        $(".container").removeClass("alert");
+        $(".uh-oh").addClass("hidden");
+      }
+
+      let toDoItem = $(".form-control").val(); // This fetches the user input and turns it into a variable.
+      const listedItem = listAppend(toDoItem); // This takes the variable from prev line and turns it into a list item.
+      $(".need-to-do").append(listedItem); // This dumps the new list item into the list in the main section.
+
+      event.currentTarget.value = ""; // This clears the input field as soon as the Enter key is hit 
+      return false; // This combines PreventDefault and StopPropagation 
+    }
+  });
+});
+
+// Crossing out a finished task and moving it to the bottom of the list
+$(".need-to-do").on("click", "li", function(){
+  $(this).removeClass();
+  $(this).addClass("filled-box text-muted");
+  $(this).appendTo(".all-done");
+});
+
+// Click + Shift removes item from whichever list it is in
+$("ul").on("click","li", function(){
+  if (event.shiftKey) {
+    $(this).remove();
+  }
+});
+
+</script>
+</body>
+</html>
